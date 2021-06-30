@@ -89,7 +89,6 @@ stages:
       artifact: dropScripts
 
 - stage: Deploy
-  dependsOn: Build
   jobs:
   - deployment: VMDeploy
     displayName: Install packages for testing
