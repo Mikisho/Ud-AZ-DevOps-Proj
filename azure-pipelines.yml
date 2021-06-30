@@ -53,7 +53,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        backendServiceArm: 'Ud-az-service'
+        backendServiceArm: 'Terraform-project'
         backendAzureRmResourceGroupName: 'ud-proj-state'
         backendAzureRmStorageAccountName: 'udprojtfstate'
         backendAzureRmContainerName: 'tfstate'
@@ -65,7 +65,7 @@ stages:
         provider: 'azurerm'
         command: 'apply'
         commandOptions: '-var-file="$(Agent.TempDirectory)/terraform.tfvars'
-        environmentServiceNameAzureRM: 'Ud-az-service'
+        environmentServiceNameAzureRM: 'Terraform-project'
         workingDirectory: 'terraform'
     - task: ArchiveFiles@2
       displayName: 'Archive FakeRestAPI'
@@ -89,6 +89,7 @@ stages:
       artifact: dropScripts
 
 - stage: Deploy
+  dependsOn: Build
   jobs:
   - deployment: VMDeploy
     displayName: Install packages for testing
@@ -148,7 +149,7 @@ stages:
           - task: AzureWebApp@1
             displayName: 'Deploy Azure Web App'
             inputs:
-              azureSubscription: 'Ud-az-service'
+              azureSubscription: 'Terraform-project'
               appName: 'udacity-dev-appservice'
               appType: webApp
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
