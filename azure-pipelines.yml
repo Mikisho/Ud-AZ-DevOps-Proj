@@ -49,7 +49,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        backendServiceArm: 'az-tfm-dev-pipeline'
+        backendServiceArm: 'Ud-az-service'
         backendAzureRmResourceGroupName: 'ud-proj-state'
         backendAzureRmStorageAccountName: 'udprojtfstate'
         backendAzureRmContainerName: 'tfstate'
@@ -61,7 +61,7 @@ stages:
         provider: 'azurerm'
         command: 'apply'
         commandOptions: '-var-file="$(Agent.TempDirectory)/terraform.tfvars'
-        environmentServiceNameAzureRM: 'az-tfm-dev-pipeline'
+        environmentServiceNameAzureRM: 'Ud-az-service'
         workingDirectory: 'terraform'
     - task: ArchiveFiles@2
       displayName: 'Archive FakeRestAPI'
