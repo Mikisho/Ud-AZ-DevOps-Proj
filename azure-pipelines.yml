@@ -9,6 +9,9 @@ stages:
     pool:
       name: Hosted Ubuntu 1604
     steps:
+    - task: DownloadSecureFile@1
+      inputs:
+        secureFile: '.env'
     - task: InstallSSHKey@0
       inputs:
         knownHostsEntry: 'known_hosts'
