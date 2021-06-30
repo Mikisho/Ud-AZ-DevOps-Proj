@@ -1,1 +1,1 @@
-# Ud-AZ-DevOps-Proj
+# Udacity-Azure-DevOps

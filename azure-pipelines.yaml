@@ -1,0 +1,174 @@
+name: Azure Pipelines
+variables:
+  python.version: '3.7.6'
+  # System.Debug: true
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+      name: Hosted Ubuntu 1604
+    steps:
+    - task: InstallSSHKey@0
+      inputs:
+        knownHostsEntry: '$(KNOWN_HOST_STRING)'
+        sshPublicKey: '$(PUBLIC_KEY)'
+        sshKeySecureFile: 'id_rsa'
+    - task: CmdLine@2
+      displayName: Install newman package command
+      inputs:
+        script: 'sudo npm install -g newman'
+        WorkingDirectory : $(System.DefaultWorkingDirectory)
+    - task: CmdLine@2
+      condition: succeededOrFailed()
+      displayName: Run newman command
+      inputs:
+        script: 'newman run automatedtesting/postman/StarterAPIs.json -e automatedtesting/postman/dev.postman_environment.json --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
+        WorkingDirectory : $(System.DefaultWorkingDirectory)
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: 'Results\junitReport.xml'
+        failTaskOnFailedTests: false
+        testRunTitle: 'Integration Tests'
+  - job: Terraform
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: TerraformInstaller@0
+      displayName: Install Terraform
+      inputs:
+        terraformVersion: '1.0.0'
+    - task: DownloadSecureFile@1
+      displayName: 'Download secure file $(terraform.tfvars)'
+      inputs:
+        secureFile: 'terraform.tfvars'
+    - task: TerraformTaskV1@0
+      displayName: Terraform Init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'ud-az-tfm-proj'
+        backendAzureRmResourceGroupName: 'ud-proj-state'
+        backendAzureRmStorageAccountName: 'udprojtfstate'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'key1'
+        workingDirectory: 'terraform'
+    - task: TerraformTaskV1@0
+      displayName: Terraform validate and apply
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        commandOptions: '-var-file="$(Agent.TempDirectory)/terraform.tfvars'
+        environmentServiceNameAzureRM: 'udacityproj-tfm'
+        workingDirectory: 'terraform'
+    - task: ArchiveFiles@2
+      displayName: 'Archive FakeRestAPI'
+      continueOnError: true
+      inputs:
+        rootFolderOrFile: 'automatedtesting/jmeter/fakerestapi'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
+      displayName: 'Upload Package'
+      artifact: drop-fakerestapi
+
+    - task: CopyFiles@2
+      displayName: 'Copy python scripts for later use in the pipeline'
+      inputs:
+        contents: 'automatedtesting/selenium/**'
+        targetFolder: '$(Build.StagingDirectory)'
+    - publish: '$(Build.ArtifactStagingDirectory)/automatedtesting/selenium'
+      displayName: 'Publish python scripts for later use'
+      artifact: dropScripts
+
+- stage: Deploy
+  dependsOn: Build
+  jobs:
+  - deployment: VMDeploy
+    displayName: Install packages for testing
+    environment:
+      name:  MyLinuxDev
+      resourceType: VirtualMachine
+      tags: web
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: dropScripts
+          - task: CopyFiles@2
+            displayName: Copy login script to Temp folder
+            inputs:
+              SourceFolder: '$(Pipeline.Workspace)/dropScripts'
+              Contents: '**'
+              TargetFolder: '$(Agent.TempDirectory)'
+              OverWrite: true
+          - task: Bash@3
+            displayName: Install Python, chromium and Run Selenium Tests
+            inputs:
+              targetType: 'inline'
+              script: |
+                #! /bin/bash
+                
+                CHROME_DRIVER_VERSION=`curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE`
+                sudo apt-get upgrade -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get install -y chromium-browser
+                sudo apt-get install unzip
+                pip3 install webdriver-manager
+                pip3 install selenium
+                echo CHROME_DRIVER_VERSION
+                wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
+                unzip ~/chromedriver_linux64.zip -d ~/
+                rm ~/chromedriver_linux64.zip
+                sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
+                sudo chown root:root /usr/local/bin/chromedriver
+                sudo chmod 0755 /usr/local/bin/chromedriver
+          - task: CmdLine@2
+            condition: succeededOrFailed()
+            displayName: Run Selenium Tests
+            inputs:
+              script: |
+                python3 $(Agent.TempDirectory)/login.py
+  - deployment: FakeRestAPI
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    environment: 'DEV'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: 'Deploy Azure Web App'
+            inputs:
+              azureSubscription: 'Azure subscription 1'
+              appName: 'udacity-dev-appservice'
+              appType: webApp
+              package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+
+  - job: Jmeter
+    dependsOn: FakeRestAPI
+    pool:
+        vmImage: 'ubuntu-latest'
+    steps:
+    - task: JMeterInstaller@0
+      displayName: 'Install JMeter 5.2.1'
+      inputs:
+        jmeterVersion: '5.2.1'
+    - task: Bash@3
+      displayName: 'Run Jmeter Stress test'
+      inputs:
+        targetType: 'inline'
+        script: |
+          jmeter -n -t automatedtesting/jmeter/Starter.jmx -JCsvPath=automatedtesting/jmeter/NumberOfUsers.csv -JStressTestUsers=30 -JEnduranceTestUsers=0
+    - task: Bash@3
+      displayName: 'Run Jmeter Endurance test'
+      inputs:
+        targetType: 'inline'
+        script: |
+          jmeter -n -t automatedtesting/jmeter/Starter.jmx -JCsvPath=automatedtesting/jmeter/NumberOfUsers.csv -JStressTestUsers=0 -JEnduranceTestUsers=30
+          
