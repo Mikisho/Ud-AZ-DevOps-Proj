@@ -57,7 +57,7 @@ stages:
         backendAzureRmResourceGroupName: 'ud-proj-state'
         backendAzureRmStorageAccountName: 'udprojtfstate'
         backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: 'tqNIbn5sEFir7W2I6Qb65anriJGozSXQAJTqhO53BCwwcKlb7pQZKiVjXTLHjhN10/+7b3/dTbkDUNEQ0aawEA=='
+        backendAzureRmKey: 'key1'
         workingDirectory: 'terraform'
     - task: TerraformTaskV1@0
       displayName: Terraform validate and apply
