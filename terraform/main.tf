@@ -12,13 +12,7 @@ terraform {
 }
 
 terraform {
-  backend "azurerm" {
-    resource_group_name  = "ud-proj-state"
-    storage_account_name = "udprojtfstate"
-    container_name       = "tfstate"
-    key                  = "key1"
-    access_key           = ""
-  }
+  backend "azurerm" {}
 }
 
 module "resource_group" {
