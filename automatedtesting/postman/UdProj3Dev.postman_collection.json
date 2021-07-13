@@ -59,12 +59,6 @@
 							"    pm.expect(pm.response.text()).to.include(\"success\");",
 							"});",
 							"",
-							"//validating json parameter",
-							"pm.test(\"id is greater than 0\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.data[0].id).is.above(0);",
-							"});",
-							"",
 							"//validating schema",
 							"var schema = {",
 							"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
@@ -151,7 +145,6 @@
 						"exec": [
 							"pm.test(\"Successful response\", function () {\r",
 							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
-							"});\r",
 							"});"
 						],
 						"type": "text/javascript"
