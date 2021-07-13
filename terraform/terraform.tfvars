@@ -6,7 +6,7 @@
 
 # Resource Group/Location
 location = "East US"
-resource_group = "ud-proj-state"
+resource_group = "ud-proj3-state"
 application_type = "appService"
 
 # Network

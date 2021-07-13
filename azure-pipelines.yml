@@ -55,7 +55,7 @@ stages:
         provider: 'azurerm'
         command: 'init'
         backendServiceArm: 'Ud-az-service'
-        backendAzureRmResourceGroupName: 'ud-proj-state'
+        backendAzureRmResourceGroupName: 'ud-proj3-state'
         backendAzureRmStorageAccountName: 'udprojtfstate'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'key1'
