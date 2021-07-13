@@ -155,7 +155,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseurl}}/api/v1/employee/{{id}}",
+					"raw": "{{baseurl}}/api/v1/employee/1",
 					"host": [
 						"{{baseurl}}"
 					],
