@@ -152,12 +152,6 @@
 							"pm.test(\"Successful response\", function () {\r",
 							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
 							"});\r",
-							"\r",
-							"//Test for particular value in the response body \r",
-							"pm.test(\"Person is Tiger Nixon\", () => {\r",
-							"  const responseData = pm.response.json();\r",
-							"  pm.expect(responseData.data.employee_name).to.eql(\"Tiger Nixon\");\r",
-							"  pm.expect(responseData.data.employee_age).to.eql(61);\r",
 							"});"
 						],
 						"type": "text/javascript"
