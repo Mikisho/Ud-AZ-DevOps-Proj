@@ -27,7 +27,7 @@ stages:
       condition: succeededOrFailed()
       displayName: Run newman command
       inputs:
-        script: 'newman run automatedtesting/postman/StarterAPIs.json -e automatedtesting/postman/dev.postman_environment.json --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
+        script: 'newman run automatedtesting/postman/UdProj3Dev.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
         WorkingDirectory : $(System.DefaultWorkingDirectory)
     - task: PublishTestResults@2
       condition: succeededOrFailed()
