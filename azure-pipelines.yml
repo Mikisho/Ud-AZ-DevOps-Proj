@@ -12,7 +12,8 @@ stages:
     - task: InstallSSHKey@0
       inputs:
         knownHostsEntry: 'known_hosts'
-        sshPublicKey: 'mykey.pub'
+        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDUg6shPh0uK0miagxmeUZAfWXNy8pLtsaJP7y8IiKJ4IR1nddifOO0hol4pj+zviUarKYaNTA4Fw6x12lHR1UBYutQ+fJlZsaiU2UwOAX+sMHYiMFhaozSRYtMYUZnHDVHplLnv5zIJSLMHiAEF8Xn1RDDQAjxFHOi1SoLlsXUZ6TCOz5mZWePn9M1XvYCqCkQPpjcg41JMaYDp/cliAdDRNPIkQfP42A3y+yEvkB5PDeSL46RXLuz1SOY/R1SgCyT17bS4CTlB4NANxntUtKTZMwPRC8N/rFqmmtpQaaDbqa8sbUX3PRPtZiWeepHiOgVoiRnG+NKy/qx1R3KjcJ7RcOYER1q8eAUR/wsz7V33MKhpOlLjIEkJYWbgMjX7celtVMrnUrYMvvm58NKZ2Kiuvv4os1ucKb2uhTuPxYdXwvx1fgbtk2NCps+76v6z5HJi/PFYDd2P4t60pXlD9nDLPdC9QHC7VT7j1IQqBjKusXnHDTqM6IaRaVblfRzzgM= akuget@outlook.com
+        '
         sshKeySecureFile: 'mykey'
     - task: TerraformInstaller@0
       displayName: 'Use Terraform latest'
