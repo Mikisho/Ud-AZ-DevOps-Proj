@@ -13,7 +13,7 @@ stages:
       inputs:
         knownHostsEntry: 'known_hosts'
         sshPublicKey: '$(ssh_pub_key)'
-        sshKeySecureFile: 'id_rsa'
+        sshKeySecureFile: 'mykey'
     - task: TerraformInstaller@0
       displayName: 'Use Terraform latest'
       inputs:
