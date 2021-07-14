@@ -1,4 +1,8 @@
 provider "azurerm" {
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id
+  client_id       = var.client_id
+  client_secret   = var.client_secret
   features {}
 }
 
@@ -12,7 +16,12 @@ terraform {
 }
 
 terraform {
-  backend "azurerm" {}
+  backend "azurerm" {
+    resource_group_name  = "udp3-tstate-rg"
+    storage_account_name = "udp3tfstate"
+    container_name       = "tfstate"
+    key                  = "key1"
+  }
 }
 
 module "resource_group" {
