@@ -20,7 +20,7 @@ terraform {
     resource_group_name  = "udp3-tstate-rg"
     storage_account_name = "udp3tfstate"
     container_name       = "tfstate"
-    key                  = "key1"
+    key                  = "terraform.tfstate"
   }
 }
 
