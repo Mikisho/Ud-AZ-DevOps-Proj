@@ -95,7 +95,7 @@ stages:
   - deployment: VMDeploy
     displayName: Install packages for testing
     environment:
-      name:  MyLinuxDev
+      name:  DEV
       resourceType: VirtualMachine
       tags: web
     strategy:
@@ -150,8 +150,8 @@ stages:
           - task: AzureWebApp@1
             displayName: 'Deploy Azure Web App'
             inputs:
-              azureSubscription: 'Ud-az-service'
-              appName: 'udacity-dev-appservice'
+              azureSubscription: 'UdacityProj3'
+              appName: 'appService-AppService'
               appType: webApp
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
 
