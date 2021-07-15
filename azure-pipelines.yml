@@ -118,7 +118,7 @@ stages:
               script: |
                 #! /bin/bash
                 
-                CHROME_DRIVER_VERSION=`curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE`
+                CHROME_DRIVER_VERSION=`curl -sS https://chromedriver.storage.googleapis.com/91.0.4472.101`
                 sudo apt-get upgrade -y
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
@@ -127,7 +127,7 @@ stages:
                 pip3 install webdriver-manager
                 pip3 install selenium
                 echo CHROME_DRIVER_VERSION
-                wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
+                wget -N https://chromedriver.storage.googleapis.com/91.0.4472.101/chromedriver_linux64.zip -P ~/
                 unzip ~/chromedriver_linux64.zip -d ~/
                 rm ~/chromedriver_linux64.zip
                 sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
@@ -151,7 +151,7 @@ stages:
             displayName: 'Deploy Azure Web App'
             inputs:
               azureSubscription: 'Ud-az-service'
-              appName: 'appService-AppService'
+              appName: 'dev-app-proj3'
               appType: webApp
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
 
@@ -169,11 +169,11 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          jmeter -n -t automatedtesting/jmeter/Starter.jmx -JCsvPath=automatedtesting/jmeter/NumberOfUsers.csv -JStressTestUsers=30 -JEnduranceTestUsers=0
+          jmeter -n -t automatedtesting/jmeter/Starter.jmx -JCsvPath=automatedtesting/jmeter/Users.csv -JStressTestUsers=30 -JEnduranceTestUsers=0
     - task: Bash@3
       displayName: 'Run Jmeter Endurance test'
       inputs:
         targetType: 'inline'
         script: |
-          jmeter -n -t automatedtesting/jmeter/Starter.jmx -JCsvPath=automatedtesting/jmeter/NumberOfUsers.csv -JStressTestUsers=0 -JEnduranceTestUsers=30
+          jmeter -n -t automatedtesting/jmeter/Starter.jmx -JCsvPath=automatedtesting/jmeter/Users.csv -JStressTestUsers=0 -JEnduranceTestUsers=30
           
