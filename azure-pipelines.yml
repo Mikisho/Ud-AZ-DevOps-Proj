@@ -139,7 +139,19 @@ stages:
             displayName: Run Selenium Tests
             inputs:
               script: |
-                python3 $(Agent.TempDirectory)/login.py
+                sudo mkdir -p /var/logs/seleniumlogfile.txt
+                sudo chmod 775 /var/logs/seleniumlogfile.txt
+                python3 $(Agent.TempDirectory)/login.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
+                cd $(Agent.TempDirectory)
+                mkdir -p logs/selenium
+                pwd
+                cat seleniumlog.txt
+                ls -la
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: '$(Agent.TempDirectory)/seleniumlog.txt'
+              artifact: 'Seleniumlog'
+              publishLocation: 'pipeline'
   - deployment: FakeRestAPI
     pool:
       vmImage: 'Ubuntu-16.04'
