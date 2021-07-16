@@ -118,7 +118,7 @@ stages:
               script: |
                 #! /bin/bash
                 
-                CHROME_DRIVER_VERSION=`curl -sS https://chromedriver.storage.googleapis.com/91.0.4472.101`
+                CHROME_DRIVER_VERSION=`curl -sS  https://chromedriver.storage.googleapis.com/index.html?path=91.0.4472.101`
                 sudo apt-get upgrade -y
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
@@ -127,7 +127,7 @@ stages:
                 pip3 install webdriver-manager
                 pip3 install selenium
                 echo CHROME_DRIVER_VERSION
-                wget -N https://chromedriver.storage.googleapis.com/91.0.4472.101/chromedriver_linux64.zip -P ~/
+                wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
                 unzip ~/chromedriver_linux64.zip -d ~/
                 rm ~/chromedriver_linux64.zip
                 sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
@@ -147,14 +147,24 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: AzureWebApp@1
+          - task: AzureRmWebAppDeployment@4
             displayName: 'Deploy Azure Web App'
             inputs:
-              azureSubscription: 'Ud-az-service'
-              appName: 'dev-app-proj3'
-              appType: webApp
-              package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
-
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'UdacityProj3'
+              appType: 'webAppLinux'
+              WebAppName: 'dev-app-proj3'
+              deployToSlotOrASE: true
+              ResourceGroupName: 'udp3-tstate-rg'
+              SlotName: 'production'
+              packageForLinux: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                # Write your commands here
+                  
+                echo 'FakeRestAPI Running'
   - job: Jmeter
     dependsOn: FakeRestAPI
     pool:
