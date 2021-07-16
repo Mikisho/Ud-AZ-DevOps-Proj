@@ -102,19 +102,15 @@ stages:
       runOnce:
         deploy:
           steps:
-          # - download: current
-          #   artifact: dropScripts
-          # - task: CopyFiles@2
-          #   displayName: Copy login script to Temp folder
-          #   inputs:
-          #     SourceFolder: '$(Pipeline.Workspace)/dropScripts'
-          #     Contents: '**'
-          #     TargetFolder: '$(Agent.TempDirectory)'
-          #     OverWrite: true
-          - publish: $(System.DefaultWorkingDirectory)/automatedtesting/selenium/login.py
-            artifact: selenium-python-file
           - download: current
-            artifact: selenium-python-file
+            artifact: dropScripts
+          - task: CopyFiles@2
+            displayName: Copy login script to Temp folder
+            inputs:
+              SourceFolder: '$(Pipeline.Workspace)/dropScripts'
+              Contents: '**'
+              TargetFolder: '$(Agent.TempDirectory)'
+              OverWrite: true
           - task: Bash@3
             displayName: Install Python, chromium and Run Selenium Tests
             inputs:
@@ -143,20 +139,11 @@ stages:
             displayName: Run Selenium Tests
             inputs:
               script: |
-                sudo mkdir -p /var/logs/seleniumlogfile.txt
-                sudo chmod 775 /var/logs/seleniumlogfile.txt
-                python3 -u $(Pipeline.Workspace)/selenium-python-file/login.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
-                cd $(System.DefaultWorkingDirectory)
-                mkdir -p logs/selenium
-                pwd
-                cat seleniumlog.txt
-                ls -la
-                
-          - task: PublishPipelineArtifact@1
-            inputs:
-              targetPath: '$(Pipeline.Workspace)/seleniumlog.txt'
-              artifact: 'Seleniumlog'
-              publishLocation: 'pipeline'
+                sudo mkdir -p /var/logs/
+                sudo chmod 775 /var/logs/
+                touch /var/logs/seleniumlogfile.txt
+                python3 $(Agent.TempDirectory)/login.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
+                cat /var/logs/seleniumlogfile.txt
   - deployment: FakeRestAPI
     pool:
       vmImage: 'Ubuntu-16.04'
