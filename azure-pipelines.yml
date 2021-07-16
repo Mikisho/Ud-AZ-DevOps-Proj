@@ -19,24 +19,24 @@ stages:
       displayName: 'Use Terraform latest'
       inputs:
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-    - task: CmdLine@2
-      displayName: Install newman package command
-      inputs:
-        script: 'sudo npm install -g newman'
-        WorkingDirectory : $(System.DefaultWorkingDirectory)
-    - task: CmdLine@2
-      condition: succeededOrFailed()
-      displayName: Run newman command
-      inputs:
-        script: 'newman run automatedtesting/postman/UdProj3Dev.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
-        WorkingDirectory : $(System.DefaultWorkingDirectory)
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: 'Results\junitReport.xml'
-        failTaskOnFailedTests: false
-        testRunTitle: 'Integration Tests'
+    # - task: CmdLine@2
+    #   displayName: Install newman package command
+    #   inputs:
+    #     script: 'sudo npm install -g newman'
+    #     WorkingDirectory : $(System.DefaultWorkingDirectory)
+    # - task: CmdLine@2
+    #   condition: succeededOrFailed()
+    #   displayName: Run newman command
+    #   inputs:
+    #     script: 'newman run automatedtesting/postman/UdProj3Dev.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
+    #     WorkingDirectory : $(System.DefaultWorkingDirectory)
+    # - task: PublishTestResults@2
+    #   condition: succeededOrFailed()
+    #   inputs:
+    #     testResultsFormat: 'JUnit'
+    #     testResultsFiles: 'Results\junitReport.xml'
+    #     failTaskOnFailedTests: false
+    #     testRunTitle: 'Integration Tests'
   - job: Terraform
     pool:
       vmImage: 'ubuntu-latest'
