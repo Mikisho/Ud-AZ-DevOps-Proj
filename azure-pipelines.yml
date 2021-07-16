@@ -137,7 +137,7 @@ stages:
             displayName: Run Selenium Tests
             inputs:
               script: |
-                sudo python3 -u $(Pipeline.Workspace)/selenium-python-file/login.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
+                python3 $(Agent.TempDirectory)/login.py
   - deployment: FakeRestAPI
     pool:
       vmImage: 'Ubuntu-16.04'
