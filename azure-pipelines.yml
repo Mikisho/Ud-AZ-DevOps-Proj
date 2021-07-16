@@ -118,27 +118,26 @@ stages:
               script: |
                 #! /bin/bash
                 
-                CHROME_DRIVER_VERSION=`curl -sS  https://chromedriver.storage.googleapis.com/index.html?path=91.0.4472.101`
                 sudo apt-get upgrade -y
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
                 sudo apt-get install -y chromium-browser
-                sudo apt-get install unzip
+                sudo apt-get install -y chromium-chromedriver
                 pip3 install webdriver-manager
-                pip3 install selenium
-                echo CHROME_DRIVER_VERSION
-                wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
-                unzip ~/chromedriver_linux64.zip -d ~/
-                rm ~/chromedriver_linux64.zip
-                sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
-                sudo chown root:root /usr/local/bin/chromedriver
-                sudo chmod 0755 /usr/local/bin/chromedriver
+                sudo pip3 install -U selenium
+                wget -N https://chromedriver.storage.googleapis.com/91.0.4472.101/chromedriver_linux64.zip -P ~/
+                unzip chromedriver_linux64.zip
+                rm -rf chromedriver_linux.zip
+                chromium-browser -version
+                chromedriver --version
+                sudo mkdir -p /var/logs/seleniumlogfile.txt
+                sudo chmod 775 /var/logs/seleniumlogfile.txt
           - task: CmdLine@2
             condition: succeededOrFailed()
             displayName: Run Selenium Tests
             inputs:
               script: |
-                python3 $(Agent.TempDirectory)/login.py
+                sudo python3 -u $(Pipeline.Workspace)/selenium-python-file/login.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
   - deployment: FakeRestAPI
     pool:
       vmImage: 'Ubuntu-16.04'
