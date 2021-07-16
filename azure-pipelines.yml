@@ -151,7 +151,7 @@ stages:
             displayName: 'Deploy Azure Web App'
             inputs:
               ConnectionType: 'AzureRM'
-              azureSubscription: 'UdacityProj3'
+              azureSubscription: 'Ud-az-service'
               appType: 'webAppLinux'
               WebAppName: 'dev-app-proj3'
               deployToSlotOrASE: true
