@@ -14,17 +14,19 @@ def login (user, password):
     options.add_argument("--headless") 
     driver = webdriver.Chrome(options=options)
     # driver = webdriver.Chrome(r'C:\Users\IEUser\Downloads\chromedriver_win32\chromedriver.exe')
+
+    url = "https://www.saucedemo.com"
     print ('Browser started successfully. Navigating to the demo page to login.')
-    driver.get('https://www.saucedemo.com/')
+    driver.get(url)
 
     driver.find_element_by_id('user-name').send_keys('standard_user')
     driver.find_element_by_id('password').send_keys('secret_sauce')
     driver.find_element_by_css_selector('.btn_action').click()
     print(driver.current_url)
-    print('https://www.saucedemo.com/' + '/inventory.html')
-    logging.info('https://www.saucedemo.com/' + '/inventory.html')
-    #assert baseUrl + "/inventory.html" == driver.current_url
-    if 'https://www.saucedemo.com/'+ '/inventory.html' == driver.current_url:
+    print(url + '/inventory.html')
+    logging.info(url + '/inventory.html')
+    
+    if url + '/inventory.html' == driver.current_url:
         print("### TEST PASSED - " + user + " Logged in Successfully")  
     else:
         print("### TEST FAILED - " + user + " unable to login")
