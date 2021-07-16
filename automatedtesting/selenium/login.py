@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+# #!/usr/bin/env python
 import logging
 import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
-crmDrvPath = '/usr/local/bin/chromedriver'
+# crmDrvPath = '/usr/local/bin/chromedriver'
 
 # Start the browser and login with standard_user
 def login (user, password):
@@ -12,7 +12,7 @@ def login (user, password):
     # --uncomment when running in Azure DevOps.
     options = ChromeOptions()
     options.add_argument("--headless") 
-    driver = webdriver.Chrome(crmDrvPath, options=options)
+    driver = webdriver.Chrome(options=options)
     # driver = webdriver.Chrome(r'C:\Users\IEUser\Downloads\chromedriver_win32\chromedriver.exe')
     print ('Browser started successfully. Navigating to the demo page to login.')
     driver.get('https://www.saucedemo.com/')

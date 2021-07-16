@@ -1,6 +1,6 @@
 name: Azure Pipelines
 variables:
-  python.version: '3.7.6'
+  python.version: '3.9.1'
   # System.Debug: true
 stages:
 - stage: Build
@@ -132,9 +132,6 @@ stages:
                 unzip ~/chromedriver_linux64.zip -d ~/
                 rm -rf ~/chromedriver_linux64.zip
                 chromedriver --version
-                sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
-                sudo chown root:root /usr/local/bin/chromedriver
-                sudo chmod 0755 /usr/local/bin/chromedriver
           - task: CmdLine@2
             condition: succeededOrFailed()
             displayName: Run Selenium Tests
@@ -155,7 +152,7 @@ stages:
               ConnectionType: 'AzureRM'
               azureSubscription: 'Ud-az-service'
               appType: 'webAppLinux'
-              WebAppName: 'dev-app-proj3'
+              WebAppName: 'dev-az-app-proj3'
               deployToSlotOrASE: true
               ResourceGroupName: 'udp3-tstate-rg'
               SlotName: 'production'
