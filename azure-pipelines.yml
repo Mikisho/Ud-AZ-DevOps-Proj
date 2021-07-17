@@ -143,8 +143,9 @@ stages:
                 sudo mkdir -p /var/logs/
                 sudo chmod 775 /var/logs/
                 sudo cp $(Agent.TempDirectory)/selenium-test.log /var/logs/selenium-test.log
+                sudo chmod 775 /var/logs/selenium-test.log
                 python3 $(Agent.TempDirectory)/login.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
-                cat /var/logs/seleniumlogfile.txt
+                cat /var/logs/selenium-test.log
   - deployment: FakeRestAPI
     pool:
       vmImage: 'Ubuntu-16.04'
