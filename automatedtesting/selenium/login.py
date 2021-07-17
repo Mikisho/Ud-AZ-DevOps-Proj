@@ -4,6 +4,14 @@ import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
+#Logging Config
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
+    datefmt="%m/%d/%Y %I:%M:%S %p",
+    filename='selenium-test.log',
+    )
+
 # crmDrvPath = '/usr/local/bin/chromedriver'
 
 # Start the browser and login with standard_user
