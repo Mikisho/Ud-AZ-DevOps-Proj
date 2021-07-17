@@ -1,0 +1,20 @@
+07/17/2021 02:13:04 PM INFO [root.login:35] https://www.saucedemo.com/inventory.html
+07/17/2021 02:13:04 PM INFO [root.login:39] ### TEST PASSED - standard_user Logged in Successfully
+07/17/2021 02:13:04 PM INFO [root.login:57] Sauce Labs Backpack has been added to cart
+07/17/2021 02:13:06 PM INFO [root.login:57] Sauce Labs Bike Light has been added to cart
+07/17/2021 02:13:07 PM INFO [root.login:57] Sauce Labs Bolt T-Shirt has been added to cart
+07/17/2021 02:13:08 PM INFO [root.login:57] Sauce Labs Fleece Jacket has been added to cart
+07/17/2021 02:13:09 PM INFO [root.login:57] Sauce Labs Onesie has been added to cart
+07/17/2021 02:13:10 PM INFO [root.login:57] Test.allTheThings() T-Shirt (Red) has been added to cart
+07/17/2021 02:13:11 PM INFO [root.login:65] ### Checking if items were added to cart... ###
+07/17/2021 02:13:11 PM INFO [root.login:68] ### Total number of items on Page is: 6
+07/17/2021 02:13:11 PM INFO [root.login:70] ### Total items in the cart is 6
+07/17/2021 02:13:11 PM INFO [root.login:73] ### TEST PASSED - Cart contains all added items for user: standard_user
+07/17/2021 02:13:11 PM INFO [root.login:79] ### Start removing items from cart... ###
+07/17/2021 02:13:11 PM INFO [root.login:90] Sauce Labs Backpack has been successfully removed from cart
+07/17/2021 02:13:11 PM INFO [root.login:90] Sauce Labs Bike Light has been successfully removed from cart
+07/17/2021 02:13:11 PM INFO [root.login:90] Sauce Labs Bolt T-Shirt has been successfully removed from cart
+07/17/2021 02:13:11 PM INFO [root.login:90] Sauce Labs Fleece Jacket has been successfully removed from cart
+07/17/2021 02:13:11 PM INFO [root.login:90] Sauce Labs Onesie has been successfully removed from cart
+07/17/2021 02:13:11 PM INFO [root.login:96] Test.allTheThings() T-Shirt (Red) has been removed from cart
+07/17/2021 02:13:11 PM INFO [root.login:98] No more item in the cart
