@@ -35,10 +35,11 @@ def login (user, password):
     logging.info(url + '/inventory.html')
     
     if url + '/inventory.html' == driver.current_url:
-        print("### TEST PASSED - " + user + " Logged in Successfully")  
+        print("### TEST PASSED - " + user + " Logged in Successfully")
+        logging.info("### TEST PASSED - " + user + " Logged in Successfully")  
     else:
         print("### TEST FAILED - " + user + " unable to login")
-
+        logging.warning("### TEST FAILED - " + user + " unable to login")
     # Inventory List 
     items = driver.find_elements_by_css_selector("div.inventory_item")
     successful_btn_index = []

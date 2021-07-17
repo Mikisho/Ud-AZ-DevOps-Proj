@@ -142,7 +142,7 @@ stages:
                 sudo rm -r /var/logs/seleniumlogfile.txt
                 sudo mkdir -p /var/logs/
                 sudo chmod 775 /var/logs/
-                sudo touch /var/logs/seleniumlogfile.txt
+                sudo cp $(Agent.TempDirectory)/selenium-test.log /var/logs/selenium-test.log
                 python3 $(Agent.TempDirectory)/login.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
                 cat /var/logs/seleniumlogfile.txt
   - deployment: FakeRestAPI
