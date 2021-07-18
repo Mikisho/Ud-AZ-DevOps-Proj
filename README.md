@@ -20,52 +20,53 @@ In this project, the following tools were used
 
 * Azure Pipeline
 
-![AzureDevOps Pipeline](screenshots/pipeline.jpg)
+![AzureDevOps Pipeline](screenshots/pipeline.png)
 
 ## Stages of pipeline
 
 * Build Stage
 
-![Build](screenshots/Build.jpg)
+![Build](screenshots/Build.png)
 
 * Terraform 
 
-![Tfm](screenshots/terraform.jpg)
+![Tfm](screenshots/terraform.png)
 
 * Postman test results
 
-![newman](screenshots/newman.jpg)
+![newman](screenshots/newman.png)
 
-![newmansuc](screenshots/newman_success.jpg)
+![newmansuc](screenshots/newman_success.png)
 
-![newmangraph](screenshots/newman_graph.jpg)
+![newmangraph](screenshots/newman_graph.png)
 
 * Jmeter test results 
 
 Endurance Test
-![JmeterEnd](screenshots/JmeterEnduranceTest.jpg)
+
+![JmeterEnd](screenshots/JmeterEnduranceTest.png)
 
 Stress Test
 
-![JmeterStr](screenshots/JmeterStressTest.jpg)
+![JmeterStr](screenshots/JmeterStressTest.png)
 
 * Selenium test results
 
-![JmeterEnd](screenshots/SelinumTest.jpg)
+![JmeterEnd](screenshots/SelinumTest.png)
 
 * Azure Log Analytics 
 
-![log](screenshots/AzureLogs.jpg)
+![log](screenshots/AzureLogs.png)
 
 Custom Logs 
 
-![Customlog](screenshots/Customloge.jpg)
+![Customlog](screenshots/Customloge.png)
 
 * Azure alert setup 
 
 Cpu usage alert
-![cpual](screenshots/alerts.jpg)
+![cpual](screenshots/alerts.png)
 
 * Azure alert Email notification setup 
 
-![alertEmail](screenshots/alertemail.jpg)
+![alertEmail](screenshots/alertemail.png)
