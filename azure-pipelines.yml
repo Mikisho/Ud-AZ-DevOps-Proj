@@ -26,10 +26,16 @@ stages:
         WorkingDirectory : $(System.DefaultWorkingDirectory)
     - task: CmdLine@2
       condition: succeededOrFailed()
-      displayName: Run newman command
+      displayName: Run newman Regression Test
       inputs:
-        script: 'newman run automatedtesting/postman/UdProj3Dev.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
+        script: 'newman run automatedtesting/postman/UdProj3DevRegression.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
         WorkingDirectory : $(System.DefaultWorkingDirectory)
+    - task: CmdLine@2
+      condition: succeededOrFailed()
+      displayName: Run newman Validation Test
+      inputs:
+          script: 'newman run automatedtesting/postman/UdProj3DevValidation.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
+          WorkingDirectory : $(System.DefaultWorkingDirectory)
     - task: PublishTestResults@2
       condition: succeededOrFailed()
       inputs:
@@ -37,37 +43,37 @@ stages:
         testResultsFiles: 'Results\junitReport.xml'
         failTaskOnFailedTests: false
         testRunTitle: 'Integration Tests'
-  - job: Terraform
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: TerraformInstaller@0
-      displayName: Install Terraform
-      inputs:
-        terraformVersion: '1.0.0'
-    - task: DownloadSecureFile@1
-      displayName: 'Download secure file $(terraform.tfvars)'
-      inputs:
-        secureFile: 'terraform.tfvars'
-    - task: TerraformTaskV2@2
-      displayName: Terraform Init
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        backendServiceArm: 'Ud-az-service'
-        backendAzureRmResourceGroupName: 'udp3-tstate-rg'
-        backendAzureRmStorageAccountName: 'udp3tfstate'
-        backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: 'key1'
-        workingDirectory: 'terraform'
-    - task: TerraformTaskV2@2
-      displayName: Terraform validate and apply
-      inputs:
-        provider: 'azurerm'
-        command: 'destroy'
-        commandOptions: '-var-file="$(Agent.TempDirectory)/terraform.tfvars'
-        environmentServiceNameAzureRM: 'Ud-az-service'
-        workingDirectory: 'terraform'
+  # - job: Terraform
+  #   pool:
+  #     vmImage: 'ubuntu-latest'
+  #   steps:
+  #   - task: TerraformInstaller@0
+  #     displayName: Install Terraform
+  #     inputs:
+  #       terraformVersion: '1.0.0'
+  #   - task: DownloadSecureFile@1
+  #     displayName: 'Download secure file $(terraform.tfvars)'
+  #     inputs:
+  #       secureFile: 'terraform.tfvars'
+  #   - task: TerraformTaskV2@2
+  #     displayName: Terraform Init
+  #     inputs:
+  #       provider: 'azurerm'
+  #       command: 'init'
+  #       backendServiceArm: 'Ud-az-service'
+  #       backendAzureRmResourceGroupName: 'devopsproj3-rg'
+  #       backendAzureRmStorageAccountName: 'udp3tfstate'
+  #       backendAzureRmContainerName: 'tfstate'
+  #       backendAzureRmKey: 'key1'
+  #       workingDirectory: 'terraform'
+  #   - task: TerraformTaskV2@2
+  #     displayName: Terraform validate and apply
+  #     inputs:
+  #       provider: 'azurerm'
+  #       command: 'apply'
+  #       commandOptions: '-var-file="$(Agent.TempDirectory)/terraform.tfvars'
+  #       environmentServiceNameAzureRM: 'Ud-az-service'
+  #       workingDirectory: 'terraform'
 #     - task: ArchiveFiles@2
 #       displayName: 'Archive FakeRestAPI'
 #       continueOnError: true
