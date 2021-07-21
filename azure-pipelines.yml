@@ -64,133 +64,135 @@ stages:
       displayName: Terraform validate and apply
       inputs:
         provider: 'azurerm'
-        command: 'apply'
+        command: 'destroy'
         commandOptions: '-var-file="$(Agent.TempDirectory)/terraform.tfvars'
         environmentServiceNameAzureRM: 'Ud-az-service'
         workingDirectory: 'terraform'
-    - task: ArchiveFiles@2
-      displayName: 'Archive FakeRestAPI'
-      continueOnError: true
-      inputs:
-        rootFolderOrFile: 'automatedtesting/jmeter/fakerestapi'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-      displayName: 'Upload Package'
-      artifact: drop-fakerestapi
+#     - task: ArchiveFiles@2
+#       displayName: 'Archive FakeRestAPI'
+#       continueOnError: true
+#       inputs:
+#         rootFolderOrFile: 'automatedtesting/jmeter/fakerestapi'
+#         includeRootFolder: false
+#         archiveType: 'zip'
+#         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+#     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
+#       displayName: 'Upload Package'
+#       artifact: drop-fakerestapi
 
-    - task: CopyFiles@2
-      displayName: 'Copy python scripts for later use in the pipeline'
-      inputs:
-        contents: 'automatedtesting/selenium/**'
-        targetFolder: '$(Build.StagingDirectory)'
-    - publish: '$(Build.ArtifactStagingDirectory)/automatedtesting/selenium'
-      displayName: 'Publish python scripts for later use'
-      artifact: dropScripts
+#     - task: CopyFiles@2
+#       displayName: 'Copy python scripts for later use in the pipeline'
+#       inputs:
+#         contents: 'automatedtesting/selenium/**'
+#         targetFolder: '$(Build.StagingDirectory)'
+#     - publish: '$(Build.ArtifactStagingDirectory)/automatedtesting/selenium'
+#       displayName: 'Publish python scripts for later use'
+#       artifact: dropScripts
 
-- stage: Deploy
-  dependsOn: Build
-  jobs:
-  - deployment: VMDeploy
-    displayName: Install packages for testing
-    environment:
-      name:  DEV
-      resourceType: VirtualMachine
-      tags: web
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            artifact: dropScripts
-          - task: CopyFiles@2
-            displayName: Copy login script to Temp folder
-            inputs:
-              SourceFolder: '$(Pipeline.Workspace)/dropScripts'
-              Contents: '**'
-              TargetFolder: '$(Agent.TempDirectory)'
-              OverWrite: true
-          - task: Bash@3
-            displayName: Install Python, chromium and Run Selenium Tests
-            inputs:
-              targetType: 'inline'
-              script: |
-                #! /bin/bash
+# - stage: Deploy
+#   dependsOn: Build
+#   jobs:
+#   - deployment: VMDeploy
+#     displayName: Install packages for testing
+#     environment:
+#       name:  DEV
+#       resourceType: VirtualMachine
+#       tags: web
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - download: current
+#             artifact: dropScripts
+#           - task: CopyFiles@2
+#             displayName: Copy login script to Temp folder
+#             inputs:
+#               SourceFolder: '$(Pipeline.Workspace)/dropScripts'
+#               Contents: '**'
+#               TargetFolder: '$(Agent.TempDirectory)'
+#               OverWrite: true
+#           - task: Bash@3
+#             displayName: Install Python, chromium and Run Selenium Tests
+#             inputs:
+#               targetType: 'inline'
+#               script: |
+#                 #! /bin/bash
                 
-                sudo apt-get upgrade -y
-                sudo apt-get install python3-pip -y
-                sudo apt-get install unzip -y
-                sudo apt-get update -y
-                sudo apt-get install -y chromium-browser
-                sudo apt-get install -y chromium-chromedriver
-                pip3 install webdriver-manager
-                sudo pip3 install -U selenium
-                sudo rm -rf ~/*.zip
-                wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
-                unzip ~/chromedriver_linux64.zip -d ~/
-                rm -rf ~/chromedriver_linux64.zip
-                rm -rf ~/*.zip
-                sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
-                sudo chown root:root /usr/local/bin/chromedriver
-                sudo chmod 0755 /usr/local/bin/chromedriver
-                chromedriver --version
-          - task: CmdLine@2
-            condition: succeededOrFailed()
-            displayName: Run Selenium Tests
-            inputs:
-              script: |
-                sudo mkdir -p /var/logs/
-                sudo chmod 775 /var/logs/
-                sudo cp $(Agent.TempDirectory)/selenium-test.log /var/logs/selenium-test.log
-                sudo chmod 775 /var/logs/selenium-test.log
-                python3 $(Agent.TempDirectory)/login.py 
-                cat /var/logs/selenium-test.log
-  - deployment: FakeRestAPI
-    pool:
-      vmImage: 'Ubuntu-16.04'
-    environment: 'DEV'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureRmWebAppDeployment@4
-            displayName: 'Deploy Azure Web App'
-            inputs:
-              ConnectionType: 'AzureRM'
-              azureSubscription: 'Ud-az-service'
-              appType: 'webAppLinux'
-              WebAppName: 'dev-az-app-proj3'
-              deployToSlotOrASE: true
-              ResourceGroupName: 'udp3-tstate-rg'
-              SlotName: 'production'
-              packageForLinux: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: |
-                # Write your commands here
-                  
-                echo 'FakeRestAPI Running'
-  - job: Jmeter
-    dependsOn: FakeRestAPI
-    pool:
-        vmImage: 'ubuntu-latest'
-    steps:
-    - task: JMeterInstaller@0
-      displayName: 'Install JMeter 5.2.1'
-      inputs:
-        jmeterVersion: '5.2.1'
-    - task: Bash@3
-      displayName: 'Run Jmeter Stress test'
-      inputs:
-        targetType: 'inline'
-        script: |
-          jmeter -n -t automatedtesting/jmeter/Starter.jmx -JCsvPath=automatedtesting/jmeter/Users.csv -JStressTestUsers=30 -JEnduranceTestUsers=0
-    - task: Bash@3
-      displayName: 'Run Jmeter Endurance test'
-      inputs:
-        targetType: 'inline'
-        script: |
-          jmeter -n -t automatedtesting/jmeter/Starter.jmx -JCsvPath=automatedtesting/jmeter/Users.csv -JStressTestUsers=0 -JEnduranceTestUsers=30
+#                 sudo apt-get upgrade -y
+#                 sudo apt-get install python3-pip -y
+#                 sudo apt-get install unzip -y
+#                 sudo apt-get update -y
+#                 sudo apt-get install -y chromium-browser
+#                 sudo apt-get install -y chromium-chromedriver
+#                 pip3 install webdriver-manager
+#                 sudo pip3 install -U selenium
+#                 sudo rm -rf ~/*.zip
+#                 wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
+#                 unzip ~/chromedriver_linux64.zip -d ~/
+#                 rm -rf ~/chromedriver_linux64.zip
+#                 rm -rf ~/*.zip
+#                 sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
+#                 sudo chown root:root /usr/local/bin/chromedriver
+#                 sudo chmod 0755 /usr/local/bin/chromedriver
+#                 chromedriver --version
+#           - task: CmdLine@2
+#             condition: succeededOrFailed()
+#             displayName: Run Selenium Tests
+#             inputs:
+#               script: |
+#                 sudo mkdir -p /var/logs/
+#                 sudo chmod 775 /var/logs/
+#                 sudo cp $(Agent.TempDirectory)/selenium-test.log /var/logs/selenium-test.log
+#                 sudo chmod 775 /var/logs/selenium-test.log
+#                 python3 $(Agent.TempDirectory)/login.py 
+#                 cat /var/logs/selenium-test.log
+#   - deployment: FakeRestAPI
+#     pool:
+#       vmImage: 'Ubuntu-16.04'
+#     environment: 'DEV'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - task: AzureWebApp@1
+#             displayName: 'Deploy Azure Web App'
+#             inputs:
+#               azureSubscription: 'Ud-az-service'
+#               appType: 'webApp'
+#               appName: 'dev-az-app-proj3'
+#               package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
+
+#   - job: Jmeter
+#     dependsOn: FakeRestAPI
+#     pool:
+#         vmImage: 'ubuntu-latest'
+#     steps:
+#     - task: JMeterInstaller@0
+#       displayName: 'Install JMeter 5.2.1'
+#       inputs:
+#         jmeterVersion: '5.2.1'
+#     - task: Bash@3
+#       displayName: 'Run Jmeter Stress test'
+#       inputs:
+#         targetType: 'inline'
+#         script: |
+#           sudo mkdir stresstest-html-report
+#           ls -la
+#           rm -rf *.csv stress-test-html-report/*
+#           jmeter -n -t automatedtesting/jmeter/Stresstest.jmx \ 
+#           -l StrtestRes.csv -e -f -o strtst-html-report/
+
+#           ls -la
+#     - task: Bash@3
+#       displayName: 'Run Jmeter Endurance test'
+#       inputs:
+#         targetType: 'inline'
+#         script: |
+#           sudo mkdir endurancetest-html-report
+#           ls -la
+#           rm -rf *.csv endurancetest-html-report/*
+#           jmeter -n -t automatedtesting/jmeter/Endurancetest.jmx \ 
+#           l EndurTestRes.csv -e -f -o endutst-html-report/
+
+#           ls -la
           
