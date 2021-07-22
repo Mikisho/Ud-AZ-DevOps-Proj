@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
-    datefmt="%d/%m/%Y:%I:%M:%S %p",
+    datefmt="%m/%d/%Y %I:%M:%S %p",
     filename='selenium-test.log',
     )
 

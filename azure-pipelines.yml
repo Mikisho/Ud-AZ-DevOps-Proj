@@ -67,7 +67,7 @@ stages:
         backendAzureRmKey: 'key1'
         workingDirectory: 'terraform'
     - task: TerraformTaskV2@2
-      displayName: Terraform validate and apply
+      displayName: Terraform Plan
       inputs:
         provider: 'azurerm'
         command: 'plan'
@@ -82,84 +82,84 @@ stages:
         commandOptions: '-var-file="$(Agent.TempDirectory)/terraform.tfvars'
         environmentServiceNameAzureRM: 'Ud-az-service'
         workingDirectory: 'terraform'
-#     - task: ArchiveFiles@2
-#       displayName: 'Archive FakeRestAPI'
-#       continueOnError: true
-#       inputs:
-#         rootFolderOrFile: 'automatedtesting/jmeter/fakerestapi'
-#         includeRootFolder: false
-#         archiveType: 'zip'
-#         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-#     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-#       displayName: 'Upload Package'
-#       artifact: drop-fakerestapi
+    - task: ArchiveFiles@2
+      displayName: 'Archive FakeRestAPI'
+      continueOnError: true
+      inputs:
+        rootFolderOrFile: 'automatedtesting/jmeter/fakerestapi'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
+      displayName: 'Upload Package'
+      artifact: drop-fakerestapi
 
-#     - task: CopyFiles@2
-#       displayName: 'Copy python scripts for later use in the pipeline'
-#       inputs:
-#         contents: 'automatedtesting/selenium/**'
-#         targetFolder: '$(Build.StagingDirectory)'
-#     - publish: '$(Build.ArtifactStagingDirectory)/automatedtesting/selenium'
-#       displayName: 'Publish python scripts for later use'
-#       artifact: dropScripts
+    - task: CopyFiles@2
+      displayName: 'Copy python scripts for later use in the pipeline'
+      inputs:
+        contents: 'automatedtesting/selenium/**'
+        targetFolder: '$(Build.StagingDirectory)'
+    - publish: '$(Build.ArtifactStagingDirectory)/automatedtesting/selenium'
+      displayName: 'Publish python scripts for later use'
+      artifact: dropScripts
 
-# - stage: Deploy
-#   dependsOn: Build
-#   jobs:
-#   - deployment: VMDeploy
-#     displayName: Install packages for testing
-#     environment:
-#       name:  DEV
-#       resourceType: VirtualMachine
-#       tags: web
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - download: current
-#             artifact: dropScripts
-#           - task: CopyFiles@2
-#             displayName: Copy login script to Temp folder
-#             inputs:
-#               SourceFolder: '$(Pipeline.Workspace)/dropScripts'
-#               Contents: '**'
-#               TargetFolder: '$(Agent.TempDirectory)'
-#               OverWrite: true
-#           - task: Bash@3
-#             displayName: Install Python, chromium and Run Selenium Tests
-#             inputs:
-#               targetType: 'inline'
-#               script: |
-#                 #! /bin/bash
+- stage: Deploy
+  dependsOn: Build
+  jobs:
+  - deployment: VMDeploy
+    displayName: Install packages for testing
+    environment:
+      name:  Ud-Proj3Dev
+      resourceType: VirtualMachine
+      tags: web
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: dropScripts
+          - task: CopyFiles@2
+            displayName: Copy login script to Temp folder
+            inputs:
+              SourceFolder: '$(Pipeline.Workspace)/dropScripts'
+              Contents: '**'
+              TargetFolder: '$(Agent.TempDirectory)'
+              OverWrite: true
+          - task: Bash@3
+            displayName: Install Python, chromium and Run Selenium Tests
+            inputs:
+              targetType: 'inline'
+              script: |
+                #! /bin/bash
                 
-#                 sudo apt-get upgrade -y
-#                 sudo apt-get install python3-pip -y
-#                 sudo apt-get install unzip -y
-#                 sudo apt-get update -y
-#                 sudo apt-get install -y chromium-browser
-#                 sudo apt-get install -y chromium-chromedriver
-#                 pip3 install webdriver-manager
-#                 sudo pip3 install -U selenium
-#                 sudo rm -rf ~/*.zip
-#                 wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
-#                 unzip ~/chromedriver_linux64.zip -d ~/
-#                 rm -rf ~/chromedriver_linux64.zip
-#                 rm -rf ~/*.zip
-#                 sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
-#                 sudo chown root:root /usr/local/bin/chromedriver
-#                 sudo chmod 0755 /usr/local/bin/chromedriver
-#                 chromedriver --version
-#           - task: CmdLine@2
-#             condition: succeededOrFailed()
-#             displayName: Run Selenium Tests
-#             inputs:
-#               script: |
-#                 sudo mkdir -p /var/logs/
-#                 sudo chmod 775 /var/logs/
-#                 sudo cp $(Agent.TempDirectory)/selenium-test.log /var/logs/selenium-test.log
-#                 sudo chmod 775 /var/logs/selenium-test.log
-#                 python3 $(Agent.TempDirectory)/login.py 
-#                 cat /var/logs/selenium-test.log
+                sudo apt-get upgrade -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get update -y
+                sudo apt-get install -y chromium-browser
+                sudo apt-get install -y chromium-chromedriver
+                pip3 install webdriver-manager
+                sudo pip3 install -U selenium
+                sudo rm -rf ~/*.zip
+                wget -N https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip -P ~/
+                unzip ~/chromedriver_linux64.zip -d ~/
+                rm -rf ~/chromedriver_linux64.zip
+                rm -rf ~/*.zip
+                sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
+                sudo chown root:root /usr/local/bin/chromedriver
+                sudo chmod 0755 /usr/local/bin/chromedriver
+                chromedriver --version
+          - task: CmdLine@2
+            condition: succeededOrFailed()
+            displayName: Run Selenium Tests
+            inputs:
+              script: |
+                sudo mkdir -p /var/logs/
+                sudo chmod 775 /var/logs/
+                sudo cp $(Agent.TempDirectory)/selenium-test.log /var/logs/selenium-test.log
+                sudo chmod 775 /var/logs/selenium-test.log
+                python3 $(Agent.TempDirectory)/login.py 
+                cat /var/logs/selenium-test.log
 #   - deployment: FakeRestAPI
 #     pool:
 #       vmImage: 'Ubuntu-16.04'
