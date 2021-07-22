@@ -24,25 +24,25 @@ stages:
       inputs:
         script: 'sudo npm install -g newman'
         WorkingDirectory : $(System.DefaultWorkingDirectory)
-    - task: CmdLine@2
-      condition: succeededOrFailed()
-      displayName: Run newman Regression Test
-      inputs:
-        script: 'newman run automatedtesting/postman/UdProj3DevRegression.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
-        WorkingDirectory : $(System.DefaultWorkingDirectory)
-    - task: CmdLine@2
-      condition: succeededOrFailed()
-      displayName: Run newman Validation Test
-      inputs:
-          script: 'newman run automatedtesting/postman/UdProj3DevValidation.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
-          WorkingDirectory : $(System.DefaultWorkingDirectory)
-    - task: PublishTestResults@2
-      condition: succeededOrFailed()
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: 'Results\junitReport.xml'
-        failTaskOnFailedTests: false
-        testRunTitle: 'Integration Tests'
+    # - task: CmdLine@2
+    #   condition: succeededOrFailed()
+    #   displayName: Run newman Regression Test
+    #   inputs:
+    #     script: 'newman run automatedtesting/postman/UdProj3DevRegression.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
+    #     WorkingDirectory : $(System.DefaultWorkingDirectory)
+    # - task: CmdLine@2
+    #   condition: succeededOrFailed()
+    #   displayName: Run newman Validation Test
+    #   inputs:
+    #       script: 'newman run automatedtesting/postman/UdProj3DevValidation.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
+    #       WorkingDirectory : $(System.DefaultWorkingDirectory)
+    # - task: PublishTestResults@2
+    #   condition: succeededOrFailed()
+    #   inputs:
+    #     testResultsFormat: 'JUnit'
+    #     testResultsFiles: 'Results\junitReport.xml'
+    #     failTaskOnFailedTests: false
+    #     testRunTitle: 'Integration Tests'
   - job: Terraform
     pool:
       vmImage: 'ubuntu-latest'
@@ -61,10 +61,18 @@ stages:
         provider: 'azurerm'
         command: 'init'
         backendServiceArm: 'Ud-az-service'
-        backendAzureRmResourceGroupName: 'devopsproj3-rg'
+        backendAzureRmResourceGroupName: 'udp3-tstate-rg'
         backendAzureRmStorageAccountName: 'udp3tfstate'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'key1'
+        workingDirectory: 'terraform'
+    - task: TerraformTaskV2@2
+      displayName: Terraform validate and apply
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        commandOptions: '-var-file="$(Agent.TempDirectory)/terraform.tfvars'
+        environmentServiceNameAzureRM: 'Ud-az-service'
         workingDirectory: 'terraform'
     - task: TerraformTaskV2@2
       displayName: Terraform validate and apply
