@@ -180,11 +180,12 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
+          #! /bin/bash
+
           sudo mkdir stresstest-html-report
           ls -la
           rm -rf *.csv stress-test-html-report/*
-          jmeter -n -t automatedtesting/jmeter/Stresstest.jmx \ 
-          -l StrtestRes.csv -e -f -o strtst-html-report/
+          jmeter -n -t automatedtesting/jmeter/Stresstest.jmx -l StrtestRes.csv -e -o stresstest-html-report/
 
           ls -la
     - task: Bash@3
@@ -192,10 +193,11 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
+          #! /bin/bash
+
           sudo mkdir endurancetest-html-report
           ls -la
           rm -rf *.csv endurancetest-html-report/*
-          jmeter -n -t automatedtesting/jmeter/Endurancetest.jmx \ 
-          l EndurTestRes.csv -e -f -o endutst-html-report/
+          jmeter -n -t automatedtesting/jmeter/Endurancetest.jmx -l EndurTestRes.csv -e -o endurancetest-html-report/
 
           ls -la
