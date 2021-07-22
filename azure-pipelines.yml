@@ -165,7 +165,7 @@ stages:
   - deployment: FakeRestAPI
     pool:
       vmImage: 'Ubuntu-16.04'
-    environment: 'DEV'
+    environment: 'Ud-Proj3Dev'
     strategy:
       runOnce:
         deploy:
