@@ -94,18 +94,6 @@ stages:
       displayName: 'Upload Package'
       artifact: drop-fakerestapi
 
-    - task: ArchiveFiles@2
-      displayName: 'Archive Automated Tests'
-      continueOnError: true
-      inputs:
-        rootFolderOrFile: 'automatedtesting'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-automatedtests.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-automatedtests.zip
-      displayName: 'Upload Test Package'
-      artifact: drop-automatedtests
-
     - task: CopyFiles@2
       displayName: 'Copy python scripts for later use in the pipeline'
       inputs:
