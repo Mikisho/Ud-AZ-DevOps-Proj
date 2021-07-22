@@ -175,7 +175,7 @@ stages:
             inputs:
               azureSubscription: 'Ud-az-service'
               appType: 'webApp'
-              appName: 'appService-AppService'
+              appName: 'dev-az-app-proj3'
               package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
 
   - job: Jmeter
