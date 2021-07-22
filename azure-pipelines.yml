@@ -149,14 +149,16 @@ stages:
                 sudo chown root:root /usr/local/bin/chromedriver
                 sudo chmod 0755 /usr/local/bin/chromedriver
                 chromedriver --version
-          - task: CmdLine@2
+                sudo mkdir -p /var/logs/
+                sudo chmod 775 /var/logs/
+          - task: Bash@3
             condition: succeededOrFailed()
             displayName: Run Selenium Tests
             inputs:
               script: |
-                sudo mkdir -p /var/logs/
-                sudo chmod 775 /var/logs/
-                python3 $(Pipeline.Workspace)/dropScripts/login.py
+                #! /bin/bash
+
+                sudo python3 -u $(Pipeline.Workspace)/dropScripts/login.py
                 sudo cp $(Pipeline.Workspace)/dropScripts/selenium-test.log /var/logs/selenium-test.log 
                 sudo chmod 775 /var/logs/selenium-test.log
                 # cat /var/logs/selenium-test.log
