@@ -158,7 +158,7 @@ stages:
               script: |
                 #! /bin/bash
 
-                sudo python3 -u $(Pipeline.Workspace)/dropScripts/login.py
+                sudo python3 $(Pipeline.Workspace)/dropScripts/login.py
                 sudo cp $(Pipeline.Workspace)/dropScripts/selenium-test.log /var/logs/selenium-test.log 
                 sudo chmod 775 /var/logs/selenium-test.log
                 # cat /var/logs/selenium-test.log
