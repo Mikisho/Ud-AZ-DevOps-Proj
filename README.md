@@ -34,7 +34,9 @@ In this project, the following tools were used
 
 ![newmansuc](screenshots/Postman_Validtest.png)
 
-![newmangraph](screenshots/Postmangraph.png)
+![newmangraph](screenshots/PostmanValidgraph.png)
+
+![newmangraph](screenshots/PostmanRegressiongraph.png)
 
 * Jmeter test results 
 
@@ -57,6 +59,7 @@ Custom Logs
 * Azure alert setup 
 
 Cpu usage alert
+
 ![cpual](screenshots/VMResAlertgraph.png)
 
 * Azure alert Email notification setup 
