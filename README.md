@@ -54,7 +54,7 @@ Stress Test
 
 Custom Logs 
 
-![Customlog](screenshots/CustomlogOutput.PNG)
+![Customlog](screenshots/CustomLogOutput.PNG)
 
 * Azure alert setup 
 
