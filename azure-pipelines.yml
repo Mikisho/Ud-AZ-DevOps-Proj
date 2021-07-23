@@ -30,6 +30,14 @@ stages:
       inputs:
         script: 'newman run automatedtesting/postman/UdProj3DevRegression.postman_collection.json -e automatedtesting/postman/DevEnv.postman_environment.json --delay-request 12000 --reporters cli,junit --reporter-junit-export Results\junitReport.xml'
         WorkingDirectory : $(System.DefaultWorkingDirectory)
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      displayName: Publish Regression Test Results
+      inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: 'Results\junitReport.xml'
+          failTaskOnFailedTests: false
+          testRunTitle: 'Regresssion Tests'
     - task: CmdLine@2
       condition: succeededOrFailed()
       displayName: Run newman Validation Test
@@ -38,11 +46,12 @@ stages:
           WorkingDirectory : $(System.DefaultWorkingDirectory)
     - task: PublishTestResults@2
       condition: succeededOrFailed()
+      displayName: Publish Validation Test Results
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: 'Results\junitReport.xml'
         failTaskOnFailedTests: false
-        testRunTitle: 'Integration Tests'
+        testRunTitle: 'Validation Tests'
   - job: Terraform
     pool:
       vmImage: 'ubuntu-latest'
