@@ -20,48 +20,48 @@ In this project, the following tools were used
 
 * Azure Pipeline
 
-![AzureDevOps Pipeline](screenshots/AzurePipeline.png)
+![AzureDevOps Pipeline](screenshots/AzurePipeline.PNG)
 
 ## Stages of pipeline
 
 * Terraform 
 
-![Tfm](screenshots/terraformapply.png)
+![Tfm](screenshots/terraformapply.PNG)
 
 * Postman test results
 
-![newman](screenshots/Postman_Regtest.png)
+![newman](screenshots/Postman_Regtest.PNG)
 
-![newmansuc](screenshots/Postman_Validtest.png)
+![newmansuc](screenshots/Postman_Validtest.PNG)
 
-![newmangraph](screenshots/PostmanValidgraph.png)
+![newmangraph](screenshots/PostmanValidgraph.PNG)
 
-![newmangraph](screenshots/PostmanRegressiongraph.png)
+![newmangraph](screenshots/PostmanRegressiongraph.PNG)
 
 * Jmeter test results 
 
 Endurance Test
 
-![JmeterEnd](screenshots/JmeterEndurancepipeline.png)
+![JmeterEnd](screenshots/JmeterEndurancepipeline.PNG)
 
 Stress Test
 
-![JmeterStr](screenshots/JmeterStresspipeline.png)
+![JmeterStr](screenshots/JmeterStresspipeline.PNG)
 
 * Selenium test results
 
-![Selenium](screenshots/SeleniumTest.png)
+![Selenium](screenshots/SeleniumTest.PNG)
 
 Custom Logs 
 
-![Customlog](screenshots/CustomlogOutput.png)
+![Customlog](screenshots/CustomlogOutput.PNG)
 
 * Azure alert setup 
 
 Cpu usage alert
 
-![cpual](screenshots/VMResAlertgraph.png)
+![cpual](screenshots/VMResAlertgraph.PNG)
 
 * Azure alert Email notification setup 
 
-![alertEmail](screenshots/EmailAlert.png)
+![alertEmail](screenshots/EmailAlert.PNG)
