@@ -30,9 +30,9 @@ In this project, the following tools were used
 
 * Postman test results
 
-![newman](screenshots/Postman_Regtest.PNG)
+![newman](screenshots/Postman_Regtest.png)
 
-![newmansuc](screenshots/Postman_Validtest.PNG)
+![newmansuc](screenshots/Postman_Validtest.png)
 
 ![newmangraph](screenshots/PostmanValidgraph.PNG)
 
